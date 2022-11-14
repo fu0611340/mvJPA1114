@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Students by RESTful</title>
+<script src="js/jquery3.6.0.js"></script>
+</head>
+<body>
+<h2>
+	Student ID: <input type="text" id="sid" value="101" /><br>
+	Student Name: <input type="text" id="sname" value="Mary" /><br>
+	Student Age: <input type="text" id="age" value="20" /><br>
+	<input type="button" id="query" value="全部查詢" />
+	<input type="button" id="qAge" value="年齡查詢" /><br>
+	<input type="button" id="update" value="修改" />
+	<input type="button" id="add" value="新增" />
+	<input type="button" id="remove" value="刪除" />
+</h2>
+<p>
+<div id="dis"></div>
+<table border="1">
+	<thead>
+	<tr>
+		<th>Student ID</th>
+		<th>Name</th>
+		<th>Age</th>
+	</tr>
+	</thead>
+	<tbody id="tbody">
+	</tbody>
+</table>
+<script>
+	function query() {
+		$.ajax({
+			url: 'student/getAll', 
+			type: 'get', 
+			cache: false, 
+			datatype: 'application/json', 
+			success: function(data) {
+				$("#tbody").empty();
+				$.each(data, function(index, item) {
+					var eachrow = "<tr>"
+								+ "<td>" + item.sid + "</td>"
+								+ "<td>" + item.sname + "</td>"
+								+ "<td>" + item.age + "</td>"
+								+ "</tr>";
+					$("#tbody").append(eachrow);
+				});
+			}, 
+			error: function(data) {
+				$("#dis").html('無法送出');
+			}
+		});
+	}
+	function start() {
+		$("#query").click(query);
+	}
+	$(document).ready(start);
+</script>
+</body>
+</html>

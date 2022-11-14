@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Students</title>
+<script src="js/jquery3.6.0.js"></script>
+</head>
+<body>
+<h2>
+	Student ID: <input type="text" id="sid" value="101" /><br>
+	Student Name: <input type="text" id="sname" value="Mary" /><br>
+	Student Age: <input type="text" id="age" value="20" /><br>
+	<input type="button" id="query" value="全部查詢" />
+	<input type="button" id="qAge" value="年齡查詢" /><br>
+	<input type="button" id="update" value="修改" />
+	<input type="button" id="add" value="新增" />
+	<input type="button" id="remove" value="刪除" />
+</h2>
+<p>
+<div id="dis"></div>
+<script>
+	function result(data) {
+		$("#dis").html(data);
+	}
+	function getAll() {
+		$.get("StudentServlet", result)
+	}
+	function qAge() {
+		$.get("StudentByAgeServlet", {"age": $("#age").val()}, result);
+	}
+	function modify() {
+		$.post("UpdateStudentServlet", {
+			"sid": $("#sid").val(),
+			"sname": $("#sname").val(),
+			"age": $("#age").val()
+			}, result);
+	}
+	function add() {
+		$.post("AddStudentServlet", {
+			"sid": $("#sid").val(),
+			"sname": $("#sname").val(),
+			"age": $("#age").val()
+			}, result);
+	}
+	function remove() {
+		$.post("DeleteStudentServlet", {"sid": $("#sid").val()}, result);
+	}
+	function start() {
+		$("#query").click(getAll);
+		$("#qAge").click(qAge);
+		$("#update").click(modify);
+		$("#add").click(add);
+		$("#remove").click(remove);
+	}
+	$(document).ready(start);
+</script>
+</body>
+</html>

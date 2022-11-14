@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Student Form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+</script>
+</head>
+<body>
+ <h2>
+ 
+     Student No:<input type="text" id="sid" value="201"/><br>
+     Student Name:<input type="text" id="sname" value="Mary"/><br>
+     Student Age:<input type="text" id="age" value="20"/><br>
+     <input type="button" id="query" value="Get All Students"/>
+     <input type="button" id="queryAge" value="Query Students By Age "/>
+     <input type="button" id="modify" value="update student"/>
+     <input type="button" id="add" value="Add student"/>
+     <input type="button" id="remove" value="Delete student"/><p>
+     <input type="button" id="queryRS" value="RS Get All Students"/><p>
+  <div id="display"></div>
+  <table border="1" style="width: 70%">
+     <thead>
+          <tr>
+               <th>Student ID</th>
+               <th>Student Name</th>             
+               <th>Age</th>               
+           </tr>
+     </thead>
+     <tbody id="tbody">
+     </tbody>
+    </table>
+  </h2>
+  <script>
+    
+    function result(data){
+       $("#display").html(data);
+    }
+    function queryRS(){
+    	 $.ajax({
+             url:'student/getAll',
+             type :'get',
+             cache: false,
+             datatype:"application/json",
+            success : function(data) 
+            {  
+            	$('#tbody').empty();          	  
+            	$.each(data, function (index, item) {
+            	     var eachrow = "<tr>"
+            	                 + "<td>" + item.sid + "</td>"
+            	                 + "<td>" + item.sname + "</td>"
+            	                 + "<td>" + item.age + "</td>"            	                           
+            	                 + "</tr>";
+            	     $('#tbody').append(eachrow);
+            	});  
+            },error: function(data) 
+            {
+               console.log('無法送出');
+            }
+      });
+    }
+    function remove(){
+  	  var id=$("#sid").val();
+        
+        $.post("DeleteStudentServlet",{"sid":id},result)
+  }
+    function queryAge(){
+  	    var ag=$("#age").val();
+        $.get("QueryAgeServlet",{"age":ag},result)
+    }
+    function addStudent(){
+    	  var id=$("#sid").val();
+          var name=$("#sname").val();
+          var ag=$("#age").val();
+          $.post("AddStudentServlet",{"sid":id , "sname":name , "age":ag},result)
+    }
+    function updateStudent(){
+      var id=$("#sid").val();
+      var name=$("#sname").val();
+      var ag=$("#age").val();
+      $.post("UpdateStudentServlet",{"sid":id , "sname":name , "age":ag},result)
+      
+    }
+    function getAll(){
+       $.get("StudentServlet",result); 
+    }
+    function start(){
+       $("#query").click(getAll);
+       $("#modify").click(updateStudent);
+       $("#add").click(addStudent);
+       $("#queryAge").click(queryAge);
+       $("#remove").click(remove);
+       $("#queryRS").click(queryRS);
+    }
+    $(document).ready(start);
+  </script>
+</body>
+</html>
