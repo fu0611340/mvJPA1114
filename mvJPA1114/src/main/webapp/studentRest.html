@@ -15,6 +15,7 @@
 	<input type="button" id="update" value="修改" />
 	<input type="button" id="add" value="新增" />
 	<input type="button" id="remove" value="刪除" />
+	<input type="button" id="test" value="test" />
 </h2>
 <p>
 <div id="dis"></div>
@@ -30,7 +31,47 @@
 	</tbody>
 </table>
 <script>
+	function result(data) {
+		$("#dis").text(data);
+		query();
+	}
+	function add() {
+		var obj = {
+			"sid": $("#sid").val(),
+			"sname": $("#sname").val(),
+			"age": $("#age").val()
+		};
+		
+		$.ajax({
+			url: 'student/add', 
+			type: 'post', 
+			data: JSON.stringify(obj),
+			contentType: 'application/json',
+			cache: false, 
+			datatype: 'text/html', 
+			success: function(data) {
+				alert(data);
+				query();
+			}, 
+			error: function(data) {
+				$("#dis").html('無法送出');
+			}
+		});
+	}
 	function query() {
+		$.get("student/getAll", function(data) {
+				$("#tbody").empty();
+				$.each(data, function(index, item) {
+					var eachrow = "<tr>"
+						+ "<td>" + item.sid + "</td>"
+						+ "<td>" + item.sname + "</td>"
+						+ "<td>" + item.age + "</td>"
+						+ "</tr>";
+					$("#tbody").append(eachrow);
+				});
+			}
+		);
+		/*
 		$.ajax({
 			url: 'student/getAll', 
 			type: 'get', 
@@ -51,9 +92,42 @@
 				$("#dis").html('無法送出');
 			}
 		});
+		*/
+	}
+	function test() {
+		$.post("student/test", {
+				"sid": $("#sid").val(), 
+				"sname": $("#sname").val(),
+				"age": $("#age").val()
+			}, function(data) {
+				alert(data);
+				query();
+			}
+		);
+	}
+	function remove() {
+		$.post("student/delete", {"sid": $("#sid").val()}, function(data) {
+			alert(data);
+			query();
+		});
+	}
+	function update() {
+		$.post("student/update", {
+				"sid": $("#sid").val(), 
+				"sname": $("#sname").val(),
+				"age": $("#age").val()
+			}, function(data) {
+				alert(data);
+				query();
+			}
+		);
 	}
 	function start() {
+		$("#test").click(test);
 		$("#query").click(query);
+		$("#add").click(add);
+		$("#remove").click(remove);
+		$("#update").click(update);
 	}
 	$(document).ready(start);
 </script>
